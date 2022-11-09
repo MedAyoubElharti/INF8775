@@ -6,7 +6,7 @@ entree: nom du fichier
 sortie: nombre_emplacements
         capacite_max
         tableau_r_q tableau de 2 dimentions qui regroupe le revenu r et quantite q pour chaque emplacement
-        dictionnaire indexe qui regroupe le revenu r et quantite q pour chaque emplacement par le numero d'emplacement
+        dictionnaire indexe par le num d'emplacement qui regroupe le revenu r et quantite q pour chaque emplacement par le numero d'emplacement
 '''
 def read_file(file_name):
     with open(file_name, 'r') as f:  
@@ -42,7 +42,7 @@ def rapport_r_q(table):
     return liste_rapport
 
 #avec les dictionnaires
-#entree : disctionnaire qui regroupe le nombre d'emplacement, revenu r et quantite q
+#entree : dictionnaire qui regroupe le nombre d'emplacement, revenu r et quantite q
 #sortie : dictionnaire des rapports r/q 
 def drapport_r_q(dict):
     dict_rapport = {}                             
@@ -62,6 +62,17 @@ def probabilite(liste_rapport):
         liste_probabilite.append(R/somme_rapports)
     return liste_probabilite
 
+#avec les dictionnaires
+#entree : disctionnaire des rapports r/q
+#sortie : dictionnaire des probabilites pi pour chaque emplacement 
+
+def dprobabilite(dict_rapport):
+    dict_probabilite = {}              # liste qui regroupe les probabiltes calculees pour chaque emplacement
+    somme_rapports = sum(dict_rapport.values())   # variable qui contient la sommes des rapports
+    print("somme, ", somme_rapports)
+    for e in dict_rapport :
+        dict_probabilite[e] = dict_rapport[e]/somme_rapports
+    return dict_probabilite
 
 '''
 Fonction qui calcule la fonction de repartition (probabilites cumulatives)
@@ -76,6 +87,18 @@ def repartition(liste_probabilite):
         liste_repartition.append(probabilite_precedente)
 
     return liste_repartition
+
+# avec les dictionnaires
+# entree : liste des probabilites pi
+# sortie : liste des probabilites cumulatives
+
+def drepartition(dict_probabilite):
+    dict_repartition = {}
+    probabilite_precedente = 0
+    for e in dict_probabilite :
+        probabilite_precedente += dict_probabilite[e]
+        dict_repartition[e] = probabilite_precedente
+    return dict_repartition
 
 '''
 Fonction qui retourne le numero de l'emplacement a choisir a partir d'un nombre aleatoire entre 0 et 1 
@@ -94,13 +117,18 @@ def numero_emplacement(liste_repartition, nombre_aleatoire):
 file = "exemplaires\WC-100-10-01.txt"
 capacite_max = read_file(file)[1]
 tableau_r_q = read_file(file)[2]
-dict = read_file(file)[3]
+dict_r_q = read_file(file)[3]
 
-rapport = rapport_r_q(tableau_r_q)
-drapport = drapport_r_q(dict)
+liste_rapport = rapport_r_q(tableau_r_q)
+dict_rapport = drapport_r_q(dict_r_q)
 
-# p = probabilite(rapport)
-# liste_repartition = repartition(p)
+print(sum(dict_rapport.values()))
+
+p = probabilite(liste_rapport)
+dp = dprobabilite(dict_rapport)
+
+liste_repartition = repartition(p)
+dict_repartition = drepartition(dp)
 
 # emplacement = numero_emplacement(liste_repartition, 0.5)
 
@@ -123,6 +151,6 @@ drapport = drapport_r_q(dict)
 
 
 #print(tableau_r_q)
-print(dict)
-for i in dict :
-    print(drapport[i] == rapport[i-1])
+#print(dict_r_q)
+for i in dict_r_q :
+    print(liste_repartition[i-1] == dict_repartition[i])
