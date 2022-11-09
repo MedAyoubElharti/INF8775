@@ -69,7 +69,6 @@ def probabilite(liste_rapport):
 def dprobabilite(dict_rapport):
     dict_probabilite = {}              # liste qui regroupe les probabiltes calculees pour chaque emplacement
     somme_rapports = sum(dict_rapport.values())   # variable qui contient la sommes des rapports
-    print("somme, ", somme_rapports)
     for e in dict_rapport :
         dict_probabilite[e] = dict_rapport[e]/somme_rapports
     return dict_probabilite
@@ -112,25 +111,64 @@ def numero_emplacement(liste_repartition, nombre_aleatoire):
         if nombre_aleatoire < liste_repartition[i]:
             return i + 1
 
-  
+
+def dnumero_emplacement(dict_repartition, nombre_aleatoire):
+
+    for e in dict_repartition :
+        if nombre_aleatoire < dict_repartition[e]:
+            return e + 1
+
+
+'''
+Fonction pour executer l'algo de glouton probabiliste
+Entree: nom du fichier exemplaire
+Sortie: liste des numeros des emplacements pris
+'''
+def glouton_probabliste_execute(file_name):
+    dict_r_q = read_file(file_name)[3]
+    capacite_max = int(read_file(file_name)[1])
+    capacite_dispo = capacite_max
+    emplacement_pris =[]
+    while True:
+        dict_rapport = drapport_r_q(dict_r_q)
+        dp = dprobabilite(dict_rapport)
+        dict_repartition = drepartition(dp)
+        random_number = random.random()
+        demplacement = dnumero_emplacement(dict_repartition, random_number)
+        capacite_dispo -= int(dict_r_q[demplacement][1])
+        #print("capa dispo", capacite_dispo)
+        if capacite_dispo <0 : break
+        emplacement_pris.append(demplacement)
+    return emplacement_pris
+
+
 # verifier si la somme des probabilites = 1
 file = "exemplaires\WC-100-10-01.txt"
 capacite_max = read_file(file)[1]
 tableau_r_q = read_file(file)[2]
 dict_r_q = read_file(file)[3]
 
-liste_rapport = rapport_r_q(tableau_r_q)
-dict_rapport = drapport_r_q(dict_r_q)
+# liste_rapport = rapport_r_q(tableau_r_q)
+# #dict_rapport = drapport_r_q(dict_r_q)
 
-print(sum(dict_rapport.values()))
+# print(sum(dict_rapport.values()))
 
-p = probabilite(liste_rapport)
-dp = dprobabilite(dict_rapport)
+# p = probabilite(liste_rapport)
+# dp = dprobabilite(dict_rapport)
 
-liste_repartition = repartition(p)
-dict_repartition = drepartition(dp)
+# liste_repartition = repartition(p)
+# dict_repartition = drepartition(dp)
 
 # emplacement = numero_emplacement(liste_repartition, 0.5)
+# demplacement = dnumero_emplacement(dict_repartition, 0.5)
+
+
+# pris = glouton_probabliste_execute(file)
+# capacite = 0
+# print(pris)
+# for e in pris :
+#     capacite += read_file(file)[3][e][1]
+# print(capacite)
 
 # print(emplacement)
 
@@ -151,6 +189,6 @@ dict_repartition = drepartition(dp)
 
 
 #print(tableau_r_q)
-#print(dict_r_q)
-for i in dict_r_q :
-    print(liste_repartition[i-1] == dict_repartition[i])
+# print(dict_r_q)
+# print(emplacement)
+# print(demplacement)
