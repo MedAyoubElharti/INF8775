@@ -62,7 +62,7 @@ y_val_glouton_prob = [x[0] for x in list_glouton_prob]
 #Regroupement des resultats sous forme de tuple [Taille, Temps_moyen_glouton_prob (s), Temps_moyen_prog_dyn (s), Temps_moyen_amelio_local (s)]
 Liste_resultats = []
 for i in range(len(x_val)) :
-    tuple = [x_val[i], y_val_glouton_prob[i] ] #, y_val_dpr3[i], y_val_dpr15[i]]
+    tuple = [x_val[i], y_val_glouton_prob[i]] #, y_val_dpr3[i], y_val_dpr15[i]]
     Liste_resultats.append(tuple)
 
 # Présentation des résultats sous forme de tableau
@@ -83,8 +83,20 @@ with open("tableau.txt", 'w', encoding="utf-8") as f:
 # #########
 # ############################################################################################################### 
 
+def fx_logx(x):
+    return math.log(x)
+
+def fx_x(x):
+    return x
+
 def fx_xlogx(x):
     return x*math.log(x)
+
+def fx_x2(x):
+    return x**2
+
+def fx_x3(x):
+    return x**3
 
 def test_rapport(function, x_val, y_val):
  
@@ -156,3 +168,9 @@ def plot_test_rapport_avec_courbe_tendence(fonction, x_val, y_val_glouton_p, y_v
     return
 
 plot_test_rapport(fx_xlogx,x_val, y_val_glouton_prob)
+
+plot_test_rapport(fx_logx,x_val, y_val_glouton_prob)
+plot_test_rapport(fx_xlogx,x_val, y_val_glouton_prob)
+plot_test_rapport(fx_x,x_val, y_val_glouton_prob)
+plot_test_rapport(fx_x2,x_val, y_val_glouton_prob)
+plot_test_rapport(fx_x3,x_val, y_val_glouton_prob)
