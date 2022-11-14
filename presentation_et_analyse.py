@@ -13,16 +13,18 @@ from main import main
 '''
 Fonction qui calcule le temps d'execution moyen d'un algorithme pour une taille d'exemplaire donnée n et série max s
 '''
-def temps_moyen(algo, n, s=10):
+def temps_moyen(algo, n, s):
     
     file_list = []                           #liste pour regrouper tous les fichiers qui ont la taille et la série souhaitées  
     for file in os.listdir("./exemplaires"):
-        #chaine ="WC-"+str(n)+"-"+str(s)+"-"
-        chaine ="WC-"+str(n)+"-"       #identifier les fichiers qui ont la taille souhaitée et la série souhaitées à partir de leurs noms
+        chaine ="WC-"+str(n)+"-"+str(s)+"-"   #identifier les fichiers qui ont la taille souhaitée et la série souhaitées à partir de leurs noms
+        #chaine ="WC-"+str(n)+"-"       
         if chaine in file :
             #print(file)
             file_list.append(file)
+    print("***** N = ", n , "****, S = ", s, "*******")
     print(file_list)
+    print("------------------------------------------")
     temps_moyen = 0
     for file in file_list :
         temps_moyen += main(algo, file)[1]
@@ -32,14 +34,14 @@ def temps_moyen(algo, n, s=10):
 
 # En fction de serie aussi  ??????? SOS
 # '''
-# Fonction qui prend en argument une liste des tailles d'exemplaire et retourne
-# une liste de couple temps_moyen en fonction de la taille d'exemplaire
+# Fonction qui prend en argument une liste des couples (taille, série) et retourne
+# une liste de couple temps_moyen en fonction de du couple (taille, série)
 # '''
-def liste_temps_moyen_en_fct_taille(algo, tailles):
+def liste_temps_moyen_en_fct_taille(algo, couples):
     liste = []
-    for taille in tailles:
+    for couple in couples:
         #print(taille)
-        liste.append((temps_moyen(algo, taille),taille))
+        liste.append((temps_moyen(algo, couple[0], couple[1]),couple))
     return liste
 
 
@@ -53,26 +55,35 @@ def liste_temps_moyen_en_fct_taille(algo, tailles):
 ###############################################################################################################  
 
 tailles = [100, 1000, 10000]
-x_val = tailles
+series = [10, 100, 1000]
+
+x_couples=[]
+for taille in tailles:
+    for serie in series:
+        x_couples.append((taille, serie))
+
+#x_val =  [x_couple[0] for x_couple in x_couples]
+x_val = list(dict.fromkeys([x_couple[0] for x_couple in x_couples]))
 
 # Liste de couple temps_moyen en fonction de la taille d'exemplaire pour l'algo Glouton probabiliste
-list_glouton_prob = liste_temps_moyen_en_fct_taille("Glouton_Prob", tailles)
+list_glouton_prob = liste_temps_moyen_en_fct_taille("Glouton_Prob", x_couples)
 y_val_glouton_prob = [x[0] for x in list_glouton_prob]
 
 #Regroupement des resultats sous forme de tuple [Taille, Temps_moyen_glouton_prob (s), Temps_moyen_prog_dyn (s), Temps_moyen_amelio_local (s)]
 Liste_resultats = []
-for i in range(len(x_val)) :
-    tuple = [x_val[i], y_val_glouton_prob[i]] #, y_val_dpr3[i], y_val_dpr15[i]]
+for i in range(len(x_couples)) :
+    tuple = [x_couples[i], y_val_glouton_prob[i]] #, y_val_dpr3[i], y_val_dpr15[i]]
     Liste_resultats.append(tuple)
 
 # Présentation des résultats sous forme de tableau
 
 #tableau = tabulate(Liste_resultats, headers=['Taille', 'Temps_moyen_BF (s)', 'Temps_moyen_DPR3 (s)', 'Temps_moyen_DPR15 (s)'], tablefmt = 'fancy_grid')
 
-tableau = tabulate(Liste_resultats, headers=['Taille', 'Temps_moyen_Glouton_probabiliste (s)'], tablefmt = 'fancy_grid')
+tableau = tabulate(Liste_resultats, headers=['Taille, Série', 'Temps_moyen_Glouton_probabiliste (s)'], tablefmt = 'fancy_grid')
 print(tableau)
 with open("tableau.txt", 'w', encoding="utf-8") as f:
     f.write(tableau)
+
 
 
 
