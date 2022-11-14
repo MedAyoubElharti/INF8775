@@ -54,7 +54,7 @@ def liste_temps_moyen_en_fct_taille(algo, couples):
 ######
 ###############################################################################################################  
 
-tailles = [100, 1000, 10000]
+tailles = [100]
 series = [10, 100, 1000]
 
 x_couples=[]
@@ -69,17 +69,21 @@ x_val = list(dict.fromkeys([x_couple[0] for x_couple in x_couples]))
 list_glouton_prob = liste_temps_moyen_en_fct_taille("Glouton_Prob", x_couples)
 y_val_glouton_prob = [x[0] for x in list_glouton_prob]
 
+# Liste de couple temps_moyen en fonction de la taille d'exemplaire pour l'algo Programmation dynamique
+list_prog_dyn = liste_temps_moyen_en_fct_taille("Prog_Dyn", x_couples)
+y_val_prog_dyn = [x[0] for x in list_prog_dyn]
+
 #Regroupement des resultats sous forme de tuple [Taille, Temps_moyen_glouton_prob (s), Temps_moyen_prog_dyn (s), Temps_moyen_amelio_local (s)]
 Liste_resultats = []
 for i in range(len(x_couples)) :
-    tuple = [x_couples[i], y_val_glouton_prob[i]] #, y_val_dpr3[i], y_val_dpr15[i]]
+    tuple = [x_couples[i], y_val_glouton_prob[i], y_val_prog_dyn[i]] #, y_val_dpr3[i], y_val_dpr15[i]]
     Liste_resultats.append(tuple)
 
 # Présentation des résultats sous forme de tableau
 
 #tableau = tabulate(Liste_resultats, headers=['Taille', 'Temps_moyen_BF (s)', 'Temps_moyen_DPR3 (s)', 'Temps_moyen_DPR15 (s)'], tablefmt = 'fancy_grid')
 
-tableau = tabulate(Liste_resultats, headers=['Taille, Série', 'Temps_moyen_Glouton_probabiliste (s)'], tablefmt = 'fancy_grid')
+tableau = tabulate(Liste_resultats, headers=['Taille, Série', 'Temps_moyen_Glouton_probabiliste (s)', 'Temps_moyen_Prog_Dynamique (s)'], tablefmt = 'fancy_grid')
 print(tableau)
 with open("tableau.txt", 'w', encoding="utf-8") as f:
     f.write(tableau)
@@ -119,10 +123,10 @@ def test_rapport(function, x_val, y_val):
 
     return y_p_val
 
-def plot_test_rapport(fonction, x_val, y_val_glouton_p):
+def plot_test_rapport(fonction, x_val, y_val_glouton_p, y_val_prog_dyn):
 
     y_p_val_glouton_p = test_rapport(fonction, x_val, y_val_glouton_p)
-    # y_p_val_dpr3 = test_rapport(fonction, x_val, y_val_dpr3)
+    y_p_val_prog_dyn = test_rapport(fonction, x_val, y_val_prog_dyn)
     # y_p_val_dpr15 = test_rapport(fonction, x_val, y_val_dpr15)
 
     figure, axies = plt.subplots(2, 2)
@@ -132,9 +136,9 @@ def plot_test_rapport(fonction, x_val, y_val_glouton_p):
     axies[0, 0].set(xlabel = "Tailles" ,ylabel="Temps_moyen / "+ fonction.__name__)
 
 
-    # axies[0, 1].scatter(x_val,y_p_val_dpr3, label="DPR3")
-    # axies[0, 1].set_title("DPR3")
-    # axies[0, 1].set(xlabel = "Tailles", ylabel="Temps_moyen / "+ fonction.__name__)
+    axies[0, 1].scatter(x_val,y_p_val_prog_dyn, label="ProgDynamique")
+    axies[0, 1].set_title("ProgDynamique")
+    axies[0, 1].set(xlabel = "Tailles", ylabel="Temps_moyen / "+ fonction.__name__)
 
     # axies[1, 0].scatter(x_val,y_p_val_dpr15, label="DPR15")
     # axies[1, 0].set_title("DPR15")
@@ -145,10 +149,11 @@ def plot_test_rapport(fonction, x_val, y_val_glouton_p):
 
     return
 
-def plot_test_rapport_avec_courbe_tendence(fonction, x_val, y_val_glouton_p, y_val_dpr3, y_val_dpr15):
+'''
+def plot_test_rapport_avec_courbe_tendence(fonction, x_val, y_val_glouton_p, y_val_prog_dyn, y_val_dpr15):
     
     y_p_val_bf = test_rapport(fonction, x_val, y_val_glouton_p)
-    # y_p_val_dpr3 = test_rapport(fonction, x_val, y_val_dpr3)
+    y_p_val_prog_dyn = test_rapport(fonction, x_val, y_val_prog_dyn)
     # y_p_val_dpr15 = test_rapport(fonction, x_val, y_val_dpr15)
 
     figure, axies = plt.subplots(2, 2)
@@ -177,11 +182,14 @@ def plot_test_rapport_avec_courbe_tendence(fonction, x_val, y_val_glouton_p, y_v
     figure.savefig("Rapport_function_tendence" + fonction.__name__ + ".png", dpi=500)
 
     return
+'''
 
-plot_test_rapport(fx_xlogx,x_val, y_val_glouton_prob)
+plot_test_rapport(fx_xlogx,x_val, y_val_glouton_prob, y_val_prog_dyn)
+plot_test_rapport(fx_logx,x_val, y_val_glouton_prob, y_val_prog_dyn)
+plot_test_rapport(fx_xlogx,x_val, y_val_glouton_prob, y_val_prog_dyn)
+plot_test_rapport(fx_x,x_val, y_val_glouton_prob, y_val_prog_dyn)
+plot_test_rapport(fx_x2,x_val, y_val_glouton_prob, y_val_prog_dyn)
+plot_test_rapport(fx_x3,x_val, y_val_glouton_prob, y_val_prog_dyn)
 
-plot_test_rapport(fx_logx,x_val, y_val_glouton_prob)
-plot_test_rapport(fx_xlogx,x_val, y_val_glouton_prob)
-plot_test_rapport(fx_x,x_val, y_val_glouton_prob)
-plot_test_rapport(fx_x2,x_val, y_val_glouton_prob)
-plot_test_rapport(fx_x3,x_val, y_val_glouton_prob)
+
+
