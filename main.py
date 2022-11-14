@@ -19,7 +19,8 @@ def main(algo, file_name):
         return pris, duree, revenu
     
     elif algo == "Prog_Dyn":
-        return
+        revenu, duree = programmation_dynamique(file_path)
+        return revenu, duree
 
     elif algo == "Amelio_loc":
         return
