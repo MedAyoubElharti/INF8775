@@ -15,6 +15,8 @@ def read_file(file_name):
         nombre_emplacements = data[0]
         capacite_max = data[-1]
         tableau_r_q = []                     #tableau qui regroupe le revenu r et quantite q pour chaque emplacement(= index +1)
+        tableau_r = []
+        tableau_q = []
         dict = {}
         emplacement = 1
         for line in data[1:-1]:
@@ -26,6 +28,8 @@ def read_file(file_name):
                     ligne.append(int(e))
             #print(ligne[1:])
             tableau_r_q.append(ligne[1:])
+            tableau_r.append(ligne[1])
+            tableau_q.append(ligne[2])
             dict[emplacement] = ligne[1:] 
             emplacement += 1
         return  nombre_emplacements, capacite_max, tableau_r_q, dict
@@ -173,12 +177,34 @@ def glouton_probabliste_execute(file_name):
 
     return emplacement_pris, fin-debut, revenu #execution_time
 
+def programmation_dynamique(file_name):
+    debut = time.time()
+    capacite_max = read_file(file_name)[1]
+    W = int(capacite_max)
+    tableau_r = read_file(file_name)[4]
+    tableau_q = read_file(file_name)[5]
+    n=len(tableau_r)
+    table = [[0 for x in range(W + 1)] for x in range(n + 1)] 
+ 
+    for i in range(n + 1): 
+        for j in range(W + 1): 
+            if i == 0 or j == 0: 
+                table[i][j] = 0
+            elif tableau_q[i-1] <= j: 
+                table[i][j] = max(tableau_r[i-1]  
++ table[i-1][j-tableau_q[i-1]],  table[i-1][j]) 
+            else: 
+                table[i][j] = table[i-1][j] 
+
+    fin = time.time()            
+   
+    return table[n][W], fin - debut
 
 # verifier si la somme des probabilites = 1
-file = "exemplaires\WC-100-10-01.txt"
-capacite_max = read_file(file)[1]
-tableau_r_q = read_file(file)[2]
-dict_r_q = read_file(file)[3]
+#file = "exemplaires\WC-100-10-01.txt"
+#capacite_max = read_file(file)[1]
+#tableau_r_q = read_file(file)[2]
+#dict_r_q = read_file(file)[3]
 
 # liste_rapport = rapport_r_q(tableau_r_q)
 # #dict_rapport = drapport_r_q(dict_r_q)
