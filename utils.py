@@ -32,7 +32,7 @@ def read_file(file_name):
             tableau_q.append(ligne[2])
             dict[emplacement] = ligne[1:] 
             emplacement += 1
-        return  nombre_emplacements, capacite_max, tableau_r_q, dict
+        return  nombre_emplacements, capacite_max, tableau_r_q, dict, tableau_r, tableau_q
 
 
 '''
