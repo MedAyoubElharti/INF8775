@@ -1,4 +1,5 @@
 import random
+import time
 
 '''
 Fonction pour importer les donnees depuis le fichier exemplaire 
@@ -67,7 +68,7 @@ def probabilite(liste_rapport):
 #sortie : dictionnaire des probabilites pi pour chaque emplacement 
 
 def dprobabilite(dict_rapport):
-    dict_probabilite = {}              # liste qui regroupe les probabiltes calculees pour chaque emplacement
+    dict_probabilite = {}                         # dict qui regroupe les probabiltes calculees pour chaque emplacement
     somme_rapports = sum(dict_rapport.values())   # variable qui contient la sommes des rapports
     for e in dict_rapport :
         dict_probabilite[e] = dict_rapport[e]/somme_rapports
@@ -114,10 +115,17 @@ def numero_emplacement(liste_repartition, nombre_aleatoire):
 
 def dnumero_emplacement(dict_repartition, nombre_aleatoire):
 
+    keys_list = list(dict_repartition.keys())
+
+    for i in range(len(keys_list)):
+        if nombre_aleatoire < dict_repartition[keys_list[i]]:
+            return keys_list[i]
+    '''
     for e in dict_repartition :
         if nombre_aleatoire < dict_repartition[e]:
+            index = dict_repartition.index(e)
             return e + 1
-
+    '''
 
 '''
 Fonction pour executer l'algo de glouton probabiliste
@@ -125,21 +133,45 @@ Entree: nom du fichier exemplaire
 Sortie: liste des numeros des emplacements pris
 '''
 def glouton_probabliste_execute(file_name):
+
+    #start
+    debut = time.time()
     dict_r_q = read_file(file_name)[3]
     capacite_max = int(read_file(file_name)[1])
     capacite_dispo = capacite_max
     emplacement_pris =[]
-    while True:
+    revenu = 0
+    i = 0
+    while capacite_dispo>0 and i < len(dict_r_q) :
+        i+=1
         dict_rapport = drapport_r_q(dict_r_q)
+        # print("__________________________________________________________")
+        # print("i = ", i)
+        # print("----------------------------------------------------------")
+        # print("len dict_r_q: ", len(dict_r_q))
+        # for key, value in dict_r_q.items() : print(key, value)
         dp = dprobabilite(dict_rapport)
         dict_repartition = drepartition(dp)
+        # print("######################## REPARTITION #######################")
+        # print("len Repartition", len(dict_repartition))
+        # for key, value in dict_repartition.items() : print(key, value)
+        # print("#####################################################################")
         random_number = random.random()
+        # print("---------Random---------", random_number)
         demplacement = dnumero_emplacement(dict_repartition, random_number)
-        capacite_dispo -= int(dict_r_q[demplacement][1])
+        # print("emplacement: ", demplacement)
+        if dict_r_q[demplacement][1] < capacite_dispo:
+            capacite_dispo -= int(dict_r_q[demplacement][1])
+            emplacement_pris.append(demplacement)
+            revenu += int(dict_r_q[demplacement][0])
+            dict_r_q.pop(demplacement)
         #print("capa dispo", capacite_dispo)
         if capacite_dispo <0 : break
-        emplacement_pris.append(demplacement)
-    return emplacement_pris
+        
+    #end
+    fin = time.time()
+
+    return emplacement_pris, fin-debut, revenu #execution_time
 
 
 # verifier si la somme des probabilites = 1
